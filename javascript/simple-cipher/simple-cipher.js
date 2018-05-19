@@ -1,33 +1,51 @@
 class Cipher {
-  constructor() {
+  constructor(key) {
     this.letters = "abcdefghijklmnopqrstuvwxyz";
-    this.key = this.generatorKey();
-
+    this.key = this.generatorKey(key);
   }
-  generatorKey(){
-    let key = "";
+  generatorKey(key) {
+    if (key !== undefined && !key.match(/^[a-z]/)) {
+      throw new Error("Bad key");
+    }
+    console.log(key)
+    let validKey = key === undefined ? 'aaaaaaaaaa' : key;
+    let letters = this.letters;
    
     for (var i = 100; i > 0; i--) {
       let random = Math.floor( Math.random() * this.letters.length );
       // console.log(random);
-      key += this.letters.charAt(random)
+      validKey += letters.charAt(random);
     }
-    return key;
+    return validKey;
   }
-  encode(text){
-    let encondeText = "";
-
-    for (var i = 0; i < text.length; i++) {
-      
-      let index = this.letters.indexOf(text[i]) + text.indexOf(this.key[i]);
-      console.log(index);
-      if (index >= this.letters.length) {
-        index -= this.letters.length;
-      }
-      encondeText += this.letters[index];
+  encode(password) {
+    let encondePassword = "";
+    let key = this.key.split("");
+    for (var i = 0; i < password.length; i++) {
+      let letter = key[i];
+      encondePassword += letter;
     }
-    return encondeText;
+    // console.log(encondePassword);
+    return encondePassword;
+  }
+  decode(encondePassword) {
+    let decodePassword = "";
+    let plaintext = encondePassword.split("");
+    let index = 0;
+    let key = this.key.split("");
+    let letters = this.letters.split("");
+    // console.log(key);
+    for (var i = 0; i < plaintext.length; i++) {
+      index = key.indexOf(plaintext[i]);
+      // console.log(index)
+      let letter = letters[index];
+  
+      decodePassword += letter;
+    }
+    return decodePassword;
   }
 }
 
 module.exports = Cipher;
+
+
