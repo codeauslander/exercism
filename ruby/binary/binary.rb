@@ -16,3 +16,7 @@ end
 module BookKeeping
   VERSION = 3
 end
+
+
+hp = [1,"a",3].map
+p [1,"a",3]
