@@ -61,7 +61,7 @@ TEXT
   end
 
   def test_last_three_verses
-    skip
+    # skip
     expected = <<-TEXT
 2 bottles of beer on the wall, 2 bottles of beer.
 Take one down and pass it around, 1 bottle of beer on the wall.
@@ -76,7 +76,7 @@ TEXT
   end
 
   def test_all_verses
-    skip
+    # skip
     expected = <<-TEXT
 99 bottles of beer on the wall, 99 bottles of beer.
 Take one down and pass it around, 98 bottles of beer on the wall.
@@ -399,7 +399,7 @@ TEXT
   # http://ruby-doc.org/docs/ruby-doc-bundle/UsersGuide/rg/constants.html
 
   def test_bookkeeping
-    skip
+    # skip
     assert_equal 3, BookKeeping::VERSION
   end
 end
