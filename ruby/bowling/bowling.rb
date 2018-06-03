@@ -1,92 +1,76 @@
 class Game
   def initialize
-    @frames = []
-    @current_frame = []
+    @record = Hash.new { |h, k| h[k] = [] }
+    @frame = 1
+    @count = 0
   end
 
   def roll(pins)
-    raise 'Pins must have a value from 0 to 10' if 0 > pins || pins > 10
-    raise 'Should not be able to roll after game is over.' if over?
-    # add to scoring frame
-    @current_frame << pins
-    raise 'Pin count exceeds pins on the lane' if over_roll?
-    push_frame if done_frame?
+    raise Game::BowlingError, 'Score is out range' unless (0..10) === pins
+    @record[@frame] << pins
+    combination_error if (@record[@frame].sum > 10 && @frame < 11) ||
+                         (@record[10].sum < 10) && @frame == 11 ||
+                         (@record[11].sum > 10 && @record[11].first < 10)
+    next_frame(pins)
   end
 
   def score
-    ensure_over
-    bonus_rolls = @frames.length == 11
-    total = 0
-    until @frames.empty?
-      frame = @frames.shift
-      total += if strike? frame
-                 10 + next_two_rolls.reduce(&:+)
-               elsif spare? frame
-                 10 + @frames.first[0]
-               else
-                 frame.reduce(&:+)
-               end
-      break if bonus_rolls && @frames.length == 1
-    end
-    total
-  end
-
-  def ensure_over
-    if @frames.length < 10
-      raise 'Score cannot be taken until the end of the game.'
-    end
-    if @frames[9] == [10] && @frames.length != 11
-      raise 'Game is not yet over, cannot score!'
-    end
-    @over = true
+    raise Game::BowlingError, 'Incomplete game' if @record.size < 10
+    combination_error if (@record[10].sum == 10 && @record[11].size < 1) ||
+                         (@record[10].first == 10 && @record[11].size < 2)
+    scores_sum
   end
 
   private
 
-  def done_frame?
-    if @frames.length == 10
-      if strike? @frames.last
-        @current_frame.length == 2
-      elsif spare? @frames.last
-        @current_frame.length == 1
+    def scores_sum
+      @record.sum do |frame, scores|
+        if frame == 11
+          bonus
+        elsif frame == 10
+          miss(10)
+        elsif scores.first == 10
+          strike(frame)
+        elsif scores.sum == 10
+          spare(frame)
+        else
+          miss(frame)
+        end
       end
-    else
-      @current_frame.length == 2 ||
-        @current_frame[0] == 10
     end
-  end
 
-  def push_frame
-    @frames << @current_frame unless @current_frame.empty?
-    @current_frame = []
-  end
-
-  def next_two_rolls
-    @frames.take(2).flatten.take(2)
-  end
-
-  def strike?(frame)
-    frame == [10]
-  end
-
-  def spare?(frame)
-    frame[0] + frame[1] == 10
-  end
-
-  def over_roll?
-    over_frame = @current_frame.reduce(&:+) > 10
-    if @frames.length == 10
-      over_frame && @current_frame != [10, 10]
-    else
-      over_frame
+    def strike(frame)
+      10 + @record[frame + 1].first +
+        (@record[frame + 1].first  == 10 ? @record[frame + 2].first : @record[frame + 1][1])
     end
-  end
 
-  def over?
-    @frames.length == 10 &&
-      !strike?(@frames.last) &&
-      !spare?(@frames.last)
-  end
+    def spare(frame)
+      10 + @record[frame + 1].first
+    end
+
+    def miss(frame)
+      @record[frame].sum
+    end
+
+    def bonus
+      miss(11)
+    end
+
+    def next_frame(pins)
+      if pins == 10 && @frame != 11
+        @frame += 1
+      else
+        @count += 1
+        (@frame += 1 ; @count = 0) if @count == 2
+      end
+    end
+
+    def combination_error
+      raise Game::BowlingError, 'Wrong score combination'
+    end
+end
+
+class Game::BowlingError < StandardError
 end
 
 module BookKeeping
