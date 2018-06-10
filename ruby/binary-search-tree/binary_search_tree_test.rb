@@ -68,14 +68,14 @@ class BstTest < Minitest::Test
   end
 
   def test_iterating_over_larger_element
-    skip
+    # skip
     four = Bst.new 4
     four.insert 5
     assert_equal [4, 5], record_all_data(four)
   end
 
   def test_iterating_over_complex_tree
-    skip
+    # skip
     four = Bst.new 4
     four.insert 2
     four.insert 1
@@ -87,7 +87,7 @@ class BstTest < Minitest::Test
   end
 
   def test_each_returns_enumerator_if_no_block
-    skip
+    # skip
 
     tree = Bst.new 4
     [2, 1, 3, 6, 7, 5].each { |x| tree.insert x }
