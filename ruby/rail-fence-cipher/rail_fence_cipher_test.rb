@@ -14,14 +14,15 @@ class RailFenceCipherTest < Minitest::Test
   end
 
   def test_encode_with_two_rails
-    skip
+    # skip
     assert_equal 'XXXXXXXXXOOOOOOOOO',
                  RailFenceCipher.encode('XOXOXOXOXOXOXOXOXO', 2)
   end
 
   def test_encode_with_three_rails
-    skip
+    # skip
     assert_equal 'WECRLTEERDSOEEFEAOCAIVDEN',
+                 'WECRLTEECRLTE'
                  RailFenceCipher.encode('WEAREDISCOVEREDFLEEATONCE', 3)
   end
 
