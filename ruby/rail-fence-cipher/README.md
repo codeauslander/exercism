@@ -11,7 +11,6 @@ Finally the message is then read off in rows.
 
 For example, using three "rails" and the message "WE ARE DISCOVERED FLEE AT ONCE",
 the cipherer writes out:
-
 ```text
 W . . . E . . . C . . . R . . . L . . . T . . . E
 . E . R . D . S . O . E . E . F . E . A . O . C .
